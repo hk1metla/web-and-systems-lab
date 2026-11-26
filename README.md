@@ -25,9 +25,6 @@ Embedded database/session settings were replaced with local configuration, priva
 
 These projects add software and algorithm breadth beside the larger AI projects. They are not deployed public services. Authentication, authorization, CSRF protection, validation, concurrency and deployment hardening need separate review before any internet deployment. No client documents, personal recordings or real applicant records are included.
 
-
-Code, assets and external libraries are documented in [SOURCES.md](SOURCES.md).
-
 ## Verified local paths
 
 The Event Manager served the attendee and organiser pages, saved a new event to SQLite and persisted an edit. Its booking control previews the event and saves no reservation. In the Flask demo, registration, duplicate email handling, sign-in, essay feedback and validation for both numeric inputs passed local HTTP checks. The admissions labels are generated from three invented examples.
