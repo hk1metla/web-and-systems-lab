@@ -26,9 +26,7 @@ Embedded database/session settings were replaced with local configuration, priva
 These projects add software and algorithm breadth beside the larger AI projects. They are not deployed public services. Authentication, authorization, CSRF protection, validation, concurrency and deployment hardening need separate review before any internet deployment. No client documents, personal recordings or real applicant records are included.
 
 
-## Source and maintenance
-
-Recovered implementations from Shahzaib Naeem’s project backups, maintained for public review. See [SOURCES.md](SOURCES.md) for origins, third-party components and preparation changes. Run records describe software checks, not independently validated research outcomes.
+Code, assets and external libraries are documented in [SOURCES.md](SOURCES.md).
 
 ## Verified local paths
 

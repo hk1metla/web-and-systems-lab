@@ -1,0 +1,22 @@
+name: Event application checks
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "22"
+      - name: Check the event manager against a fresh SQLite database
+        working-directory: event-manager
+        run: |
+          npm ci
+          npm run build-db
+          PORT=3940 node app.js > "$RUNNER_TEMP/events.log" 2>&1 &
+          trap 'kill "$!" 2>/dev/null || true' EXIT
+          curl --fail --retry 20 --retry-connrefused --retry-delay 1 -s http://localhost:3940/attendee > /dev/null
+          curl --fail -s -X POST http://localhost:3940/attendee/book/1 | python -c 'import json,sys; result=json.load(sys.stdin); assert "No reservation" in result["message"]'
