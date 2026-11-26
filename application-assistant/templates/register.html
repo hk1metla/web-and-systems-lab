@@ -1,8 +1,6 @@
-
-        <h2>Register</h2>
-        <form method="POST">
-            Email: <input name="email"><br>
-            Password: <input name="password" type="password"><br>
-            <button type="submit">Register</button>
-        </form>
-    
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Create a demo account</title></head>
+<body><main><h1>Create a demo account</h1>
+{% if error %}<p role="alert">{{ error }}</p>{% endif %}
+{% for message in get_flashed_messages() %}<p role="status">{{ message }}</p>{% endfor %}
+<form method="post"><p><label>Email <input type="email" name="email" required maxlength="100" autocomplete="username"></label></p><p><label>Password <input type="password" name="password" required autocomplete="new-password"></label></p><p><button type="submit">Create a demo account</button></p></form><a href="/">Home</a></main></body></html>

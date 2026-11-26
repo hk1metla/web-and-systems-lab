@@ -1,15 +1,10 @@
-
-# Project: AI-Enhanced University Application Assistant (CM3070 Final Year Project)
-# Backend: Flask (Python)
-# Frontend: HTML/CSS via Jinja2 templates
-# ML: scikit-learn (for university recommendation)
-# NLP: spaCy/NLTK (for essay feedback)
-# Database: SQLite with SQLAlchemy
-
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
+from sqlalchemy.exc import IntegrityError
+import re
+import math
 import joblib
 import spacy
 import pandas as pd
@@ -26,13 +21,13 @@ nlp = spacy.load("en_core_web_sm")
 # Load ML model (fallback to mock)
 try:
     ml_model = joblib.load("recommender.pkl")
-except:
+except FileNotFoundError:
     from sklearn.linear_model import LogisticRegression
     ml_model = LogisticRegression()
     X_dummy = np.array([[3.0, 1400], [3.5, 1500], [4.0, 1600]])
     y_dummy = [0, 1, 1]
     ml_model.fit(X_dummy, y_dummy)
-    joblib.dump(ml_model, "recommender.pkl")
+
 
 # --- Database Models ---
 class User(db.Model):
@@ -54,19 +49,26 @@ def home():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        email = request.form['email']
-        password = generate_password_hash(request.form['password'])
+        email = request.form.get('email', '').strip().lower()
+        supplied = request.form.get('password', '')
+        if not re.fullmatch(r"[^@\s]+@[^@\s]+\.[^@\s]+", email) or len(email) > 100 or not supplied:
+            return render_template('register.html', error='Enter a valid email and a password.'), 400
+        password = generate_password_hash(supplied)
         new_user = User(email=email, password=password)
         db.session.add(new_user)
-        db.session.commit()
+        try:
+            db.session.commit()
+        except IntegrityError:
+            db.session.rollback()
+            return render_template('register.html', error='An account already uses this email.'), 409
         return redirect(url_for('login'))
     return render_template('register.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        user = User.query.filter_by(email=request.form['email']).first()
-        if user and check_password_hash(user.password, request.form['password']):
+        user = User.query.filter(db.func.lower(User.email) == request.form.get('email', '').strip().lower()).first()
+        if user and check_password_hash(user.password, request.form.get('password', '')):
             session['user_id'] = user.id
             return redirect(url_for('dashboard'))
         flash("Invalid login")
@@ -84,7 +86,9 @@ def essay():
         return redirect(url_for('login'))
     feedback = ""
     if request.method == 'POST':
-        text = request.form['essay']
+        text = request.form.get('essay', '').strip()
+        if not text or len(text) > 20000:
+            return render_template('essay.html', feedback='Enter between 1 and 20,000 characters.'), 400
         doc = nlp(text)
         feedback += f"Total words: {len(doc)}\n"
         feedback += f"Sentences: {len(list(doc.sents))}\n"
@@ -98,8 +102,13 @@ def essay():
 def recommend():
     result = None
     if request.method == 'POST':
-        gpa = float(request.form['gpa'])
-        sat = int(request.form['sat'])
+        try:
+            gpa = float(request.form.get('gpa', ''))
+            sat = int(request.form.get('sat', ''))
+            if not math.isfinite(gpa) or not 0 <= gpa <= 4 or not 400 <= sat <= 1600:
+                raise ValueError
+        except ValueError:
+            return render_template('recommend.html', error='Enter a GPA from 0 to 4 and an SAT score from 400 to 1600.'), 400
         prediction = ml_model.predict([[gpa, sat]])
         result = "Synthetic demonstration label 1" if prediction[0] else "Synthetic demonstration label 0"
     return render_template('recommend.html', result=result)

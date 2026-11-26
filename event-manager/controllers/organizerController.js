@@ -22,63 +22,8 @@ exports.editEvent = async (req, res) => {
   }
 };
 
-// Create a new event
-exports.createEvent = async (req, res) => {
-  console.log("createEvent - req.body:", req.body); // Log incoming data
-  try {
-    const { title, description, date, full_price_tickets, concession_tickets } = req.body;
 
-    // Validate required fields
-    if (!title || !description || !date || full_price_tickets == null || concession_tickets == null) {
-      console.error("createEvent - Missing required fields!");
-      return res.status(400).json({ error: "All fields are required." });
-    }
 
-    await Event.createEvent({
-      title,
-      description,
-      date,
-      full_price_tickets,
-      concession_tickets,
-    });
-
-    res.status(201).json({ message: "Event created successfully." });
-  } catch (err) {
-    console.error('createEvent - Error creating event:', err);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-};
-
-// Update an event
-exports.updateEvent = async (req, res) => {
-  try {
-    const eventId = req.params.id;
-    const { title, description, date, full_price_tickets, concession_tickets } = req.body;
-    await Event.updateEvent(eventId, {
-      title,
-      description,
-      date,
-      full_price_tickets,
-      concession_tickets,
-    });
-    res.redirect('/organiser');
-  } catch (err) {
-    console.error('Error updating event:', err);
-    res.status(500).send('Internal Server Error');
-  }
-};
-
-// Delete an event
-exports.deleteEvent = async (req, res) => {
-  try {
-    const eventId = req.params.id;
-    await Event.deleteEvent(eventId);
-    res.redirect('/organiser');
-  } catch (err) {
-    console.error('Error deleting event:', err);
-    res.status(500).send('Internal Server Error');
-  }
-};
 
 // File: models/Event.js
 const sqlite3 = require('sqlite3').verbose();
@@ -108,7 +53,7 @@ exports.getEventById = (id) => {
 // Create a new event
 exports.createEvent = async (req, res) => {
   // Log the incoming request body
-  console.log("createEvent - req.body:", req.body);
+
 
   try {
     // Destructure properties from req.body

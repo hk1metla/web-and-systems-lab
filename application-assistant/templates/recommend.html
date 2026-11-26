@@ -1,11 +1,6 @@
-
-        <h2>University Recommender</h2>
-        <form method="POST">
-            GPA: <input name="gpa"><br>
-            SAT Score: <input name="sat"><br>
-            <button type="submit">Recommend</button>
-        </form>
-        {% if result %}
-        <p><strong>Recommendation:</strong> {{ result }}</p>
-        {% endif %}
-    
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Synthetic score demo</title></head>
+<body><main><h1>Synthetic score demo</h1>
+{% if error %}<p role="alert">{{ error }}</p>{% endif %}
+{% for message in get_flashed_messages() %}<p role="status">{{ message }}</p>{% endfor %}
+<form method="post"><p>This model learns from three invented records.</p><p><label>GPA (0 to 4) <input name="gpa" type="number" min="0" max="4" step="any" required></label></p><p><label>SAT (400 to 1600) <input name="sat" type="number" min="400" max="1600" required></label></p><p><button type="submit">Show demo label</button></p></form>{% if result %}<p role="status">{{ result }}</p>{% endif %}<a href="/">Home</a></main></body></html>

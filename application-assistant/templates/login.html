@@ -1,8 +1,6 @@
-
-        <h2>Login</h2>
-        <form method="POST">
-            Email: <input name="email"><br>
-            Password: <input name="password" type="password"><br>
-            <button type="submit">Login</button>
-        </form>
-    
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Sign in</title></head>
+<body><main><h1>Sign in</h1>
+{% if error %}<p role="alert">{{ error }}</p>{% endif %}
+{% for message in get_flashed_messages() %}<p role="status">{{ message }}</p>{% endfor %}
+<form method="post"><p><label>Email <input type="email" name="email" required maxlength="100" autocomplete="username"></label></p><p><label>Password <input type="password" name="password" required autocomplete="current-password"></label></p><p><button type="submit">Sign in</button></p></form><a href="/">Home</a></main></body></html>

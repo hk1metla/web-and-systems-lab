@@ -1,5 +1,3 @@
-![Web and Systems Lab](assets/banner.svg)
-
 # Web and Systems Lab
 
 A collection of smaller applications and algorithm implementations, each with its own setup and limitations.
@@ -31,3 +29,7 @@ These projects add software and algorithm breadth beside the larger AI projects.
 ## Source and maintenance
 
 Recovered implementations from Shahzaib Naeem’s project backups, maintained for public review. See [SOURCES.md](SOURCES.md) for origins, third-party components and preparation changes. Run records describe software checks, not independently validated research outcomes.
+
+## Verified local paths
+
+The Event Manager served the attendee and organiser pages, saved a new event to SQLite and persisted an edit. Its booking control previews the event and saves no reservation. In the Flask demo, registration, duplicate email handling, sign-in, essay feedback and validation for both numeric inputs passed local HTTP checks. The admissions labels are generated from three invented examples.

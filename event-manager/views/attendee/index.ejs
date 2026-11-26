@@ -6,8 +6,6 @@
   <title>Attendee Home</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Axios CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 <body class="bg-gray-100 text-gray-900">
   <div class="container mx-auto px-4 py-8">
@@ -27,10 +25,10 @@
                 </p>
               </div>
               <div>
-                <!-- Book Event Button -->
+                <!-- Preview booking Button -->
                 <button class="bookBtn bg-green-600 text-white px-3 py-2 rounded hover:bg-green-700 transition-colors"
                   data-id="<%= event.id %>">
-                  Book Event
+                  Preview booking
                 </button>
               </div>
             </li>
@@ -42,82 +40,20 @@
     </div>
 
     <h1 class="text-3xl font-bold mb-6 text-center">Booked Events</h1>
-    <!-- Booked Events List -->
-    <div id="bookedEventsContainer" class="bg-white p-6 rounded shadow-md">
-      <% if (bookedEvents && bookedEvents.length > 0) { %>
-        <ul id="bookedEventsList" class="space-y-2">
-          <% bookedEvents.forEach(event => { %>
-            <li class="border p-4 rounded hover:bg-gray-50" data-id="<%= event.id %>">
-              <h2 class="text-xl font-semibold text-blue-600"><%= event.title %></h2>
-              <p class="mt-1 text-gray-600"><%= event.description %></p>
-              <p class="mt-1 text-sm text-gray-500">
-                Date: <%= new Date(event.date).toLocaleDateString() %>
-              </p>
-            </li>
-          <% }); %>
-        </ul>
-      <% } else { %>
-        <p id="noBookedEvents" class="text-gray-600">No events have been booked yet.</p>
-      <% } %>
-    </div>
+    <p id="bookingStatus" role="status" aria-live="polite"></p>
   </div>
-
-  <!-- Axios script for booking an event -->
   <script>
-    // Attach event listener for "Book Appointment" buttons using event delegation
-    document.getElementById('availableEventsContainer').addEventListener('click', async function(e) {
-      let target = e.target;
-      // Traverse up if necessary to find the button
-      while (target && target !== this) {
-        if (target.classList && target.classList.contains('bookBtn')) {
-          const eventId = target.getAttribute('data-id');
-          // Optional: Confirm booking
-          if (confirm('Do you want to book this event?')) {
-            try {
-              // Send a POST (or DELETE/PUT) request to your server’s booking endpoint
-              // Adjust the URL and method according to your backend implementation
-              const response = await axios.post('/attendee/book/' + eventId);
-              console.log('Booked event:', response.data);
-              
-              // Remove the event from the available list
-              const li = target.closest('li');
-              li.remove();
-              
-              // Optionally update the booked events list:
-              // If you already have a booked events list element, you can create a new list item
-              // Here we simply assume the response contains the booked event
-              const bookedEvent = response.data.event;
-              let bookedEventsList = document.getElementById('bookedEventsList');
-              if (!bookedEventsList) {
-                bookedEventsList = document.createElement('ul');
-                bookedEventsList.id = 'bookedEventsList';
-                bookedEventsList.className = 'space-y-2';
-                document.getElementById('bookedEventsContainer').appendChild(bookedEventsList);
-                // Also remove any "no booked events" message if present
-                const noBookedEventsMsg = document.getElementById('noBookedEvents');
-                if (noBookedEventsMsg) {
-                  noBookedEventsMsg.remove();
-                }
-              }
-              
-              // Create list item for the booked event
-              const bookedLi = document.createElement('li');
-              bookedLi.className = 'border p-4 rounded hover:bg-gray-50';
-              bookedLi.setAttribute('data-id', bookedEvent.id);
-              bookedLi.innerHTML = `
-                <h2 class="text-xl font-semibold text-blue-600">${bookedEvent.title}</h2>
-                <p class="mt-1 text-gray-600">${bookedEvent.description}</p>
-                <p class="mt-1 text-sm text-gray-500">Date: ${new Date(bookedEvent.date).toLocaleDateString()}</p>
-              `;
-              bookedEventsList.appendChild(bookedLi);
-            } catch (error) {
-              console.error('Error booking event:', error);
-              alert('Error booking event. Please try again.');
-            }
-          }
-          break;
-        }
-        target = target.parentNode;
+    const status = document.getElementById('bookingStatus');
+    document.getElementById('availableEventsContainer').addEventListener('click', async event => {
+      const button = event.target.closest('.bookBtn');
+      if (!button) return;
+      try {
+        const response = await fetch('/attendee/book/' + encodeURIComponent(button.dataset.id), { method: 'POST' });
+        if (!response.ok) throw new Error('Booking preview unavailable');
+        const data = await response.json();
+        status.textContent = data.event.title + '. ' + data.message;
+      } catch {
+        status.textContent = 'The booking preview could not be loaded.';
       }
     });
   </script>

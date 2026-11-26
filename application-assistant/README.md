@@ -10,4 +10,4 @@ python app.py
 
 Run locally at `http://127.0.0.1:5000`. Use synthetic text only when exploring. The recovered fallback classifier trains on three invented GPA/test-score records. Its labels are explicitly synthetic and must not be interpreted as university recommendations, admission chances or decisions. Counting past participles does not reliably identify passive voice.
 
-Missing trained weights, real evaluation data, CSRF protection and deployment hardening limit the prototype. Do not load untrusted joblib/pickle files. Full model-backed execution was not verified in this pass.
+Missing trained weights, real evaluation data, CSRF protection and deployment hardening limit the prototype. Do not load untrusted joblib/pickle files. The three-record fallback and the spaCy feedback route were exercised with local fixtures.

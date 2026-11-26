@@ -16,6 +16,7 @@ exports.getAttendeeHomePage = async (req, res) => {
 exports.getEventDetails = async (req, res) => {
   try {
     const event = await Event.getEventById(req.params.id);
+    if (!event) return res.status(404).send("Event not found");
     res.render('attendee/event', { event });
   } catch (err) {
     console.error('Error fetching event:', err);
@@ -39,7 +40,7 @@ exports.bookEvent = async (req, res) => {
     // For now, we simulate by returning the event data.
     // In a real application, you might update a booking table in your database.
 
-    res.status(200).json({ message: "Event booked successfully.", event });
+    res.status(200).json({ message: "Booking preview only. No reservation has been saved.", event });
   } catch (err) {
     console.error('Error booking event:', err);
     res.status(500).json({ error: 'Internal Server Error' });
