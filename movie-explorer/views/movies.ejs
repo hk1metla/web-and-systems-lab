@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= pageTitle %></title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <header>
+        <h1><%= pageTitle %></h1>
+        <nav>
+            <a href="/">Home</a> |
+            <a href="/movies">View All Movies</a>
+        </nav>
+    </header>
+    <main>
+        <% if (movies && movies.length > 0) { %>
+            <h2>Available Movies</h2>
+            <ul>
+                <% movies.forEach(movie => { %>
+                    <li><a href="/movie/<%= movie.movie_id %>">Movie ID: <%= movie.movie_id %></a></li>
+                <% }); %>
+            </ul>
+        <% } else { %>
+            <p>No movies found in the database.</p>
+        <% } %>
+    </main>
+    <footer>
+        <p>&copy; 2025 Movie Database App</p>
+    </footer>
+</body>
+</html>

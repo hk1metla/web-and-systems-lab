@@ -1,0 +1,11 @@
+
+        <h2>University Recommender</h2>
+        <form method="POST">
+            GPA: <input name="gpa"><br>
+            SAT Score: <input name="sat"><br>
+            <button type="submit">Recommend</button>
+        </form>
+        {% if result %}
+        <p><strong>Recommendation:</strong> {{ result }}</p>
+        {% endif %}
+    

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Main - Event Manager</title>
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /******************************************************
+     * Force the body and html to take full height so that 
+     * the footer can be pinned at the bottom.
+     ******************************************************/
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    /******************************************************
+     * Use a flex container that allows the main content 
+     * to grow, pushing the footer to the bottom if there
+     * isn't enough content to fill the page.
+     ******************************************************/
+    body {
+      display: flex;
+      flex-direction: column;
+    }
+
+    /******************************************************
+     * The main content area will take up all available 
+     * vertical space (flex: 1).
+     * This ensures the footer is at the bottom.
+     ******************************************************/
+    main {
+      flex: 1;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 text-gray-900">
+
+  <!-- Hero Section -->
+  <!-- This section introduces the site with a title and description. -->
+  <header class="bg-blue-50 py-16">
+    <div class="container mx-auto px-4 text-center">
+      <h1 class="text-4xl font-bold text-blue-600 mb-4">
+        Welcome to Event Manager
+      </h1>
+      <p class="text-lg text-gray-700 max-w-2xl mx-auto">
+        Your one-stop solution for creating and managing events seamlessly.
+        Explore upcoming events, manage your own, and stay organized—
+        all in one place.
+      </p>
+    </div>
+  </header>
+
+  <!-- Call to Action Section -->
+  <!-- This main content area includes two large, equally sized buttons. -->
+  <main class="container mx-auto px-4 py-8">
+    <!-- The wrapper for our call to action content. -->
+    <div class="bg-white shadow p-6 rounded text-center">
+      <h2 class="text-2xl font-semibold text-gray-800 mb-4">
+        Ready to get started?
+      </h2>
+      <p class="text-gray-600 mb-6">
+        Choose your role and discover the powerful features of our event
+        management platform.
+      </p>
+
+      <!-- A flex container that arranges the buttons side-by-side on larger screens,
+           stacking them on smaller ones. -->
+      <div class="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-4">
+        <!-- Organizer Dashboard Button -->
+        <a href="/organiser" 
+           class="inline-block bg-blue-600 text-white font-medium px-6 py-3 w-full md:w-1/3 rounded text-center
+                  hover:bg-blue-700 transition-colors">
+          Organizer Dashboard
+        </a>
+        <!-- Attendee Dashboard Button -->
+        <a href="/attendee" 
+           class="inline-block bg-green-600 text-white font-medium px-6 py-3 w-full md:w-1/3 rounded text-center
+                  hover:bg-green-700 transition-colors">
+          Attendee Dashboard
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <!-- This footer is pinned to the bottom of the viewport via the flex layout on the body. -->
+  <footer class="bg-white shadow py-4">
+    <div class="container mx-auto px-4 text-center">
+      <p class="text-gray-500">
+        © 2023 Event Manager. All rights reserved.
+      </p>
+    </div>
+  </footer>
+</body>
+</html>

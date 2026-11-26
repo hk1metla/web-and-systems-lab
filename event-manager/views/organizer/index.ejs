@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Organizer Dashboard</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Axios CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+
+<body class="bg-gray-100 text-gray-900">
+  <div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-6 text-center">Organizer Dashboard</h1>
+
+    <!-- Create Event Form -->
+    <div class="bg-white p-6 rounded shadow-md mb-8">
+      <h2 class="text-2xl font-semibold mb-4">Create New Event</h2>
+      <!-- Remove the traditional form submission attributes and add an id -->
+      <form id="createEventForm" class="space-y-4">
+        <div>
+          <label for="title" class="block font-medium mb-1">Event Title</label>
+          <input type="text" name="title" id="title" placeholder="Event Title" required
+            class="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300">
+        </div>
+
+        <div>
+          <label for="description" class="block font-medium mb-1">Description</label>
+          <textarea name="description" id="description" rows="3" placeholder="Event description" required
+            class="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300"></textarea>
+        </div>
+
+        <div>
+          <label for="date" class="block font-medium mb-1">Event Date</label>
+          <input type="date" name="date" id="date" required
+            class="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300">
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label for="full_price_tickets" class="block font-medium mb-1">Full Price Tickets</label>
+            <input type="number" name="full_price_tickets" id="full_price_tickets" min="0" required
+              class="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300">
+          </div>
+          <div>
+            <label for="concession_tickets" class="block font-medium mb-1">Concession Tickets</label>
+            <input type="number" name="concession_tickets" id="concession_tickets" min="0" required
+              class="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300">
+          </div>
+        </div>
+
+        <button type="submit"
+          class="w-full py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 transition-colors">
+          Create Event
+        </button>
+      </form>
+    </div>
+
+    <!-- List of Created Events -->
+    <div id="eventsContainer" class="bg-white p-6 rounded shadow-md">
+      <h2 class="text-2xl font-semibold mb-4">Created Events</h2>
+      <% if (events && events.length > 0) { %>
+        <ul id="eventsList" class="space-y-2">
+          <% events.forEach(event => { %>
+            <li class="flex items-center justify-between border p-4 rounded hover:bg-gray-50" data-id="<%= event.id %>">
+              <div>
+                <a href="/organiser/edit/<%= event.id %>" class="text-xl font-medium text-blue-600 hover:underline">
+                  <%= event.title %>
+                </a>
+                <p class="mt-1 text-gray-600"><%= event.description %></p>
+                <p class="mt-1 text-sm text-gray-500">
+                  Date: <%= new Date(event.created_at).toLocaleDateString() %>
+                </p>
+              </div>
+              <!-- Delete icon -->
+              <button class="deleteBtn text-red-500 hover:text-red-700" title="Delete Event">
+                <!-- Inline SVG for a trash can -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                  stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7h6m-6 0V4a1 1 0 011-1h4a1 1 0 011 1v3" />
+                </svg>
+              </button>
+            </li>
+          <% }); %>
+        </ul>
+      <% } else { %>
+        <p id="noEventsMessage" class="text-gray-600">No events have been created yet.</p>
+      <% } %>
+    </div>
+  </div>
+
+  <!-- Axios form submission script for creating events -->
+  <script>
+    document.getElementById('createEventForm').addEventListener('submit', async function (e) {
+      e.preventDefault(); // Prevent the default form submission
+
+      // Gather form data
+      const title = document.getElementById('title').value;
+      const description = document.getElementById('description').value;
+      const date = document.getElementById('date').value;
+      const fullPriceTickets = document.getElementById('full_price_tickets').value;
+      const concessionTickets = document.getElementById('concession_tickets').value;
+
+      try {
+        // Send POST request via Axios to create the event
+        const response = await axios.post('/organiser/create', {
+          title,
+          description,
+          date,
+          full_price_tickets: parseInt(fullPriceTickets, 10),
+          concession_tickets: parseInt(concessionTickets, 10)
+        });
+
+        // Extract new event from response (make sure your backend returns it)
+        const newEvent = response.data.event;
+        console.log("New event:", newEvent);
+
+        // Remove "No events have been created yet." message if it exists
+        const noEventsMessage = document.getElementById('noEventsMessage');
+        if (noEventsMessage) {
+          noEventsMessage.remove();
+        }
+
+        // Create new list item for the event with a delete button
+        const li = document.createElement('li');
+        li.className = 'flex items-center justify-between border p-4 rounded hover:bg-gray-50';
+        li.setAttribute('data-id', newEvent.id);
+        li.innerHTML = `
+          <div>
+            <a href="/organiser/edit/${newEvent.id}" class="text-xl font-medium text-blue-600 hover:underline">
+              ${newEvent.title}
+            </a>
+            <p class="mt-1 text-gray-600">${newEvent.description}</p>
+            <p class="mt-1 text-sm text-gray-500">Date: ${new Date(newEvent.created_at).toLocaleDateString()}</p>
+          </div>
+          <button class="deleteBtn text-red-500 hover:text-red-700" title="Delete Event">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7h6m-6 0V4a1 1 0 011-1h4a1 1 0 011 1v3" />
+            </svg>
+          </button>
+        `;
+        // Append the new event to the list
+        let eventsList = document.getElementById('eventsList');
+        if (!eventsList) {
+          eventsList = document.createElement('ul');
+          eventsList.id = 'eventsList';
+          eventsList.className = 'space-y-2';
+          document.getElementById('eventsContainer').appendChild(eventsList);
+        }
+        eventsList.appendChild(li);
+
+        // Clear the form fields
+        document.getElementById('createEventForm').reset();
+
+        // Optionally, show a success message
+        alert('Event created successfully!');
+      } catch (error) {
+        console.error('Error creating event:', error);
+        let errorMsg = 'An unexpected error occurred.';
+        if (error.response && error.response.data && error.response.data.error) {
+          errorMsg = error.response.data.error;
+        }
+        alert('Error: ' + errorMsg);
+      }
+
+      // For debugging: log the date field value
+      const date1 = document.getElementById('date').value;
+      console.log("Date field value:", date1);
+    });
+  </script>
+
+  <!-- Axios script for handling deletions -->
+  <script>
+    // Attach a click event listener to the parent container for event delegation
+    document.getElementById('eventsContainer').addEventListener('click', async function(e) {
+      // Check if the clicked element or its parent has the 'deleteBtn' class
+      let target = e.target;
+      while (target && target !== this) {
+        if (target.classList && target.classList.contains('deleteBtn')) {
+          // Get the event id from the closest li element
+          const li = target.closest('li');
+          const eventId = li.getAttribute('data-id');
+
+          if (confirm('Are you sure you want to delete this event?')) {
+            try {
+              // Send delete request via Axios.
+              // Adjust the endpoint as needed; for example, if your delete route is '/organiser/delete/:id'
+              await axios.delete('/organiser/delete/' + eventId);
+              // Remove the event from the DOM
+              li.remove();
+            } catch (error) {
+              console.error('Error deleting event:', error);
+              alert('Error deleting event. Please try again.');
+            }
+          }
+          break;
+        }
+        target = target.parentNode;
+      }
+    });
+  </script>
+</body>
+
+</html>

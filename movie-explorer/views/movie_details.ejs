@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= pageTitle %></title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <header>
+        <h1><%= pageTitle %></h1>
+        <nav>
+            <a href="/">Home</a> |
+            <a href="/movies">View All Movies</a>
+        </nav>
+    </header>
+    <main>
+        <% if (error) { %>
+            <p style="color: red;">Error: <%= error %></p>
+        <% } else if (movie) { %>
+            <h2>Movie ID: <%= movie.movie_id %></h2>
+
+            <section class="cast-section">
+                <h3>Cast</h3>
+                <% if (cast && cast.length > 0) { %>
+                    <ul>
+                        <% cast.forEach(member => { %>
+                            <li>
+                                <strong><%= member.actor_name %></strong> as <%= member.character_name %>
+                                (Order: <%= member.cast_order %>)
+                                <% if (member.profile_path) { %>
+                                    <img src="<%= member.profile_path %>" alt="<%= member.actor_name %>" style="width: 50px; height: 75px; object-fit: cover; vertical-align: middle; margin-left: 10px;">
+                                <% } %>
+                            </li>
+                        <% }); %>
+                    </ul>
+                <% } else { %>
+                    <p>No cast information available for this movie.</p>
+                <% } %>
+            </section>
+
+            <section class="crew-section">
+                <h3>Crew</h3>
+                <% if (crew && crew.length > 0) { %>
+                    <ul>
+                        <% crew.forEach(member => { %>
+                            <li>
+                                <strong><%= member.crew_name %></strong> (<%= member.job %> - <%= member.department %>)
+                                <% if (member.profile_path) { %>
+                                    <img src="<%= member.profile_path %>" alt="<%= member.crew_name %>" style="width: 50px; height: 75px; object-fit: cover; vertical-align: middle; margin-left: 10px;">
+                                <% } %>
+                            </li>
+                        <% }); %>
+                    </ul>
+                <% } else { %>
+                    <p>No crew information available for this movie.</p>
+                <% } %>
+            </section>
+        <% } else { %>
+            <p>Select a movie from the <a href="/movies">list</a> to view details.</p>
+        <% } %>
+    </main>
+    <footer>
+        <p>&copy; 2025 Movie Database App</p>
+    </footer>
+</body>
+</html>

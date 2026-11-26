@@ -1,0 +1,12 @@
+const assert=require('node:assert/strict');
+const {PostfixCalculator}=require('./calculator');
+const c=new PostfixCalculator();
+assert.equal(c.evaluatePostfix('2 3 +'),5);
+c.evaluatePostfix('A 3 =');
+assert.equal(c.evaluatePostfix('A 2 *'),6);
+assert.equal(c.evaluatePostfix('16 sqrt'),4);
+assert.throws(()=>c.evaluatePostfix('1 0 /'));
+assert.throws(()=>c.evaluatePostfix('3x 1 +'));
+assert.throws(()=>c.evaluatePostfix('1 2'));
+assert.equal(c.evaluatePostfix('4 2 /'),2);
+console.log('8 calculator checks passed');
